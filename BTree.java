@@ -24,32 +24,7 @@ public class BTree {
 			if(insertionLocation.nbKeys() < order-1) {//if node where we insert new key is not full
 				insertionLocation.insertKey(key);
 			} else { //if node where we insert new key is full
-				int middleKey = insertionLocation.getMiddleKey(key);
-				SortedSet<Integer> child1Keys = insertionLocation.getHeadSet(middleKey);
-				SortedSet<Integer> child2Keys = insertionLocation.getTailSet(middleKey);
-				
-				insertionLocation.setKeys(child1Keys);
-				Node child2 = new Node(order, child2Keys);
-				
-				Node father = insertionLocation.getFather();
-				if(father == null) {//if orphan
-					//create father with children
-					father = new Node(order, new TreeSet<>(Arrays.asList(middleKey)), null, insertionLocation, child2);
-					
-				} else {//if father exists
-					if(!father.isFull()) {//if father is not full
-						father.insertKey(middleKey);
-						//pointers
-						int insertionIndex = new ArrayList<>(father.getKeys()).indexOf(middleKey);
-						father.addPointer(insertionIndex+1, child2);
-					} else {//if father is full
-						//TODO
-					}
-				}
-				
-				//update father of children
-				insertionLocation.setFather(father);
-				child2.setFather(father);
+				this.splitNodes(insertionLocation, key);
 				
 				// insertionLocation => child1 (update set of keys)
 				// child2 => new Node with new set of keys 
@@ -59,6 +34,36 @@ public class BTree {
 			}
 		}
 		insertionLocation.insertKey(key);
+	}
+	
+	public void splitNodes(Node insertionLocation, Integer key) {
+		int middleKey = insertionLocation.getMiddleKey(key);
+		SortedSet<Integer> child1Keys = insertionLocation.getHeadSet(middleKey);
+		SortedSet<Integer> child2Keys = insertionLocation.getTailSet(middleKey);
+		 
+		
+		insertionLocation.setKeys(child1Keys);
+		Node child2 = new Node(order, child2Keys);
+		
+		Node father = insertionLocation.getFather();
+		if(father == null) {//if orphan
+			//create father with children
+			father = new Node(order, new TreeSet<>(Arrays.asList(middleKey)), null, insertionLocation, child2);
+			
+		} else {//if father exists
+			if(!father.isFull()) {//if father is not full
+				father.insertKey(middleKey);
+				//pointers
+				int insertionIndex = new ArrayList<>(father.getKeys()).indexOf(middleKey);
+				father.addPointer(insertionIndex+1, child2);
+			} else {//if father is full
+				this.splitNodes(father, middleKey);
+			}
+		}
+		
+		//update father of children
+		insertionLocation.setFather(father);
+		child2.setFather(father);
 	}
 	
 	public void deleteKey(Integer key) {
