@@ -58,9 +58,13 @@ public class BTree {
 
 		List<Node> insertionLocationPointers = insertionLocation.getPointers();
 		if (!insertionLocationPointers.isEmpty()) {
-			List<Node> child1Pointers = insertionLocationPointers.subList(0, child1Keys.size());
-			List<Node> child2Pointers = insertionLocationPointers.subList(child1Keys.size(),
+			System.out.println("has pointers");
+			List<Node> child1Pointers = insertionLocationPointers.subList(0, child1Keys.size() + 1);
+			List<Node> child2Pointers = insertionLocationPointers.subList(child1Keys.size() + 1,
 					insertionLocationPointers.size());
+
+			System.out.println("child1Pointers : " + child1Pointers);
+			System.out.println("child2Pointers : " + child2Pointers);
 			insertionLocation.setPointers(child1Pointers);
 			child2.setPointers(child2Pointers);
 		}
@@ -70,6 +74,7 @@ public class BTree {
 			System.out.println("orphan, create Father :");
 			// create father with children
 			father = new Node(order, new TreeSet<>(Arrays.asList(middleKey)), null, insertionLocation, child2);
+			this.root = father;
 
 		} else {// if father exists
 			System.out.println("has father");
@@ -88,7 +93,6 @@ public class BTree {
 		// update father of children
 		insertionLocation.setFather(father);
 		child2.setFather(father);
-		this.root = father;
 	}
 
 	public void deleteKey(int key) {
