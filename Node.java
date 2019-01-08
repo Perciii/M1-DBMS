@@ -2,6 +2,7 @@ package struct;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -56,7 +57,7 @@ public class Node {
 	}
 
 	public boolean isFull() {
-		return nbKeys() == order;
+		return nbKeys() == order-1;
 	}
 
 	private Node getChild(Integer key) {
@@ -104,24 +105,58 @@ public class Node {
 		return new ArrayList<>(set).get((order / 2));
 	}
 
-	public SortedSet<Integer> getHeadSet(Integer cuttingKey) {
-		return keys.headSet(getMiddleKey(cuttingKey));
+	public SortedSet<Integer> getHeadSet(Integer cuttingKey, Integer insertedKey) {
+		System.out.println("head set cutting key : " + cuttingKey);
+		SortedSet<Integer> headKeys = keys.headSet(getMiddleKey(cuttingKey));
+		if(insertedKey < cuttingKey) {
+			keys = new TreeSet<Integer>() {{
+				addAll(headKeys);
+				add(insertedKey);
+			}};
+			return keys;
+		}
+		return headKeys;
 	}
 
-	public SortedSet<Integer> getTailSet(Integer cuttingKey) {
-		return keys.tailSet(getMiddleKey(cuttingKey + 1));// middle goes into father
+	public SortedSet<Integer> getTailSet(Integer cuttingKey, Integer insertedKey) {
+		System.out.println("tail set cutting key : " + cuttingKey);
+		SortedSet<Integer> tailKeys = keys.tailSet(getMiddleKey(cuttingKey), false);
+		
+		if(cuttingKey < insertedKey) {
+			keys = new TreeSet<Integer>() {{
+				addAll(tailKeys);
+				add(insertedKey);
+			}};
+			
+			return keys;// middle goes into father
+		}
+		return tailKeys;
 	}
 
-	public void removeKey() {
-
+	public void removeKey(int key) {
+		this.keys.remove(key);
 	}
 
 	public void addPointer(int index, Node node) {
 		this.pointers.add(index, node);
 	}
 
+	public ArrayList<Node> getPointers() {
+		return pointers;
+	}
+
 	public SortedSet<Integer> getKeys() {
 		return keys;
+	}
+	
+	public Integer getKey(int index) {
+		Iterator<Integer> i = keys.iterator();
+	    int element = 0;
+	    while (i.hasNext() && index > 0)
+	    {
+	        element = i.next();
+	    }
+	    return element;
 	}
 
 	public void setKeys(TreeSet<Integer> keys) {
@@ -130,6 +165,27 @@ public class Node {
 
 	public void setFather(Node father) {
 		this.father = father;
+	}
+	
+	public int getNodeIndexInFather() {
+		return getFather().getPointers().indexOf(this);
+	}
+	
+	public Node getRightSibling() {
+		ArrayList<Node> fatherPointers = getFather().getPointers();
+		int indexOfThisNode = fatherPointers.indexOf(this);
+		if(indexOfThisNode+1 < fatherPointers.size()) {
+			Node rightSibling = fatherPointers.get(indexOfThisNode+1);
+			return rightSibling;
+		}
+		return null;
+	}
+	
+	public Node getLeftSibling() {
+		ArrayList<Node> fatherPointers = getFather().getPointers();
+		int indexOfThisNode = fatherPointers.indexOf(this);
+		Node leftSibling = fatherPointers.get(indexOfThisNode);
+		return leftSibling;
 	}
 
 	@Override
