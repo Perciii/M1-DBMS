@@ -11,7 +11,7 @@ public class Node {
 	private Node father;
 	private int order;
 	private TreeSet<Integer> keys = new TreeSet<>();
-	private ArrayList<Node> pointers;
+	private List<Node> pointers;
 
 	public Node(int order) {
 		this.order = order;
@@ -141,12 +141,12 @@ public class Node {
 		this.pointers.add(index, node);
 	}
 
-	public ArrayList<Node> getPointers() {
+	public List<Node> getPointers() {
 		return pointers;
 	}
 
-	public void setPointers(ArrayList<Node> pointers) {
-		this.pointers = pointers;
+	public void setPointers(List<Node> child1Pointers) {
+		this.pointers = child1Pointers;
 	}
 
 	public SortedSet<Integer> getKeys() {
@@ -176,7 +176,7 @@ public class Node {
 	}
 	
 	public Node getRightSibling() {
-		ArrayList<Node> fatherPointers = getFather().getPointers();
+		List<Node> fatherPointers = getFather().getPointers();
 		int indexOfThisNode = fatherPointers.indexOf(this);
 		if(indexOfThisNode+1 < fatherPointers.size()) {
 			Node rightSibling = fatherPointers.get(indexOfThisNode+1);
@@ -186,7 +186,7 @@ public class Node {
 	}
 	
 	public Node getLeftSibling() {
-		ArrayList<Node> fatherPointers = getFather().getPointers();
+		List<Node> fatherPointers = getFather().getPointers();
 		int indexOfThisNode = fatherPointers.indexOf(this);
 		Node leftSibling = fatherPointers.get(indexOfThisNode);
 		return leftSibling;
