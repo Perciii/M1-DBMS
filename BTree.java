@@ -49,11 +49,19 @@ public class BTree {
 		TreeSet<Integer> child1Keys = (TreeSet<Integer>) insertionLocation.getHeadSet(middleKey, newKey);
 		TreeSet<Integer> child2Keys = (TreeSet<Integer>) insertionLocation.getTailSet(middleKey, newKey);
 		
+		ArrayList<Node> insertionLocationPointers = insertionLocation.getPointers();
+		ArrayList<Node> child1Pointers = (ArrayList<Node>) insertionLocationPointers.subList(0, child1Keys.size());	
+		ArrayList<Node> child2Pointers = (ArrayList<Node>) insertionLocationPointers.subList(child1Keys.size(), insertionLocationPointers.size());	
+		
+		
 		System.out.println("child1keys : " + child1Keys);
 		System.out.println("child2keys : " + child2Keys);
 
 		insertionLocation.setKeys(child1Keys);
 		Node child2 = new Node(order, child2Keys);
+		
+		insertionLocation.setPointers(child1Pointers);
+		child2.setPointers(child2Pointers);
 
 		Node father = insertionLocation.getFather();
 		if (father == null) {// if orphan

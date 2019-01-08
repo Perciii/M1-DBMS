@@ -145,6 +145,10 @@ public class Node {
 		return pointers;
 	}
 
+	public void setPointers(ArrayList<Node> pointers) {
+		this.pointers = pointers;
+	}
+
 	public SortedSet<Integer> getKeys() {
 		return keys;
 	}
